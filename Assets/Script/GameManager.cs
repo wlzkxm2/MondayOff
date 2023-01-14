@@ -76,11 +76,13 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    private void LateUpdate() {
+    private void FixedUpdate() {
         // 카메라의 움직임 제어
         if(targetTr != null){
-            camera.transform.position = new Vector3(cameraPos.x, cameraPos.y + targetTr.position.y, cameraPos.z);
+            // camera.transform.position = new Vector3(cameraPos.x, cameraPos.y + targetTr.position.y, cameraPos.z);
+            Vector3 movPos = new Vector3(cameraPos.x, targetTr.position.y, cameraPos.z);
 
+            camera.transform.position = Vector3.Lerp(camera.transform.position, movPos, .2f);
         }
     }
 
@@ -93,13 +95,13 @@ public class GameManager : MonoBehaviour
     /// <summary> 공 아이템 떨어지는 동작 <summary>
     public void DropBalls(){
         for(int i = 0; i < 4; i++){
-            GameObject cloneBall = Instantiate(ballsStruct.Ball, ballsStruct.BallSpawnTr.position, Quaternion.identity);
-            cloneBall.transform.SetParent(ballsStruct.BallStorage);
-            ballList.Add(cloneBall);
-            Debug.Log(i);
+            // GameObject cloneBall = Instantiate(ballsStruct.Ball, ballsStruct.BallSpawnTr.position, Quaternion.identity);
+            // cloneBall.transform.SetParent(ballsStruct.BallStorage);
+            // ballList.Add(cloneBall);
+            // Debug.Log(i);
         }
 
-        GameManager.instance.camera_posSet(ballList[0].transform);
+        // GameManager.instance.camera_posSet(ballList[0].transform);
 
         Debug.Log(ballList);
     }
