@@ -129,6 +129,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d4472922f522cf3449fa0eff4f502c5f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ballMaterial:
+  - {fileID: 2100000, guid: 5599c955bccfdb44ba9d6215df4757e8, type: 2}
+  - {fileID: 2100000, guid: 1ef71e87bb4444340a320b6c1fa3819e, type: 2}
 --- !u!136 &195123705866773326
 CapsuleCollider:
   m_ObjectHideFlags: 0

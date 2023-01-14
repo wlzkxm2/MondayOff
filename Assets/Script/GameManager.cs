@@ -36,6 +36,8 @@ public class GameManager : MonoBehaviour
 
     private List<Transform> ballList = new List<Transform>();
 
+    private bool ballDrops = false;     // 상자에서 공을 떨궛나 체크
+    private bool colorFlag = false;
     private bool touchUp = false;
 
     private void Awake() {
@@ -60,25 +62,36 @@ public class GameManager : MonoBehaviour
     private void Update()
     {
         // 터치 손을 뗀후 공이 떨어지고있는중에 박스 이동 불가
-        if(!touchUp){
-            if(Input.GetKey(KeyCode.Mouse0)){
-                // 터치 위치를 지정
-                // 맨 왼쪽부터 0~1크기
-                // -0.5 를하게 되면 맨 왼쪽은 -0.5 중앙은 0 오른쪽은 0.5가 됨
-                Vector3 touch = Camera.main.ScreenToViewportPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, -Camera.main.transform.position.z));
-                touch = new Vector3(touch.x - 1f, touch.y, touch.z);
+        if(!ballDrops)
+        {
+            if(!touchUp){
+                if(Input.GetKey(KeyCode.Mouse0)){
+                    // 터치 위치를 지정
+                    // 맨 왼쪽부터 0~1크기
+                    // -0.5 를하게 되면 맨 왼쪽은 -0.5 중앙은 0 오른쪽은 0.5가 됨
+                    Vector3 touch = Camera.main.ScreenToViewportPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, -Camera.main.transform.position.z));
+                    touch = new Vector3(touch.x - 1f, touch.y, touch.z);
 
-                movingBox.setPos(touch);
+                    movingBox.setPos(touch);
+                }
+            }
+            // 터치 손을 뗏을때
+            if(Input.GetKeyUp(KeyCode.Mouse0)){
+                Debug.Log("mouse Up");
+                touchUp = true;
+                movingBox.boolturnboxs();
+                StartCoroutine("TouchUpReset");
+            }
+        }else{
+            if(Input.GetKeyDown(KeyCode.Mouse0)){
+                // Debug.Log(ballList.Count);
+                colorFlag = !colorFlag;
+                foreach(Transform InItem in ballList){
+                    InItem.GetComponent<BallController>().changeColor();
+                }
             }
         }
 
-        // 터치 손을 뗏을때
-        if(Input.GetKeyUp(KeyCode.Mouse0)){
-            Debug.Log("mouse Up");
-            touchUp = true;
-            movingBox.boolturnboxs();
-            StartCoroutine("TouchUpReset");
-        }
     }
 
     private void FixedUpdate() {
@@ -103,9 +116,8 @@ public class GameManager : MonoBehaviour
         for(int i = 0; i < startDropBallCounts; i++){
             GameObject cloneBall = Instantiate(ballsStruct.Ball, BallSpawnRandomPosition(), Quaternion.identity);
             Transform clonBallTr = cloneBall.transform;
-            clonBallTr.SetParent(ballsStruct.BallStorage);
-            
-            ballList.Add(clonBallTr);
+
+            addBallList(clonBallTr);
             // Debug.Log(i);
         }
         camera_posSet(ballList[0]);
@@ -128,9 +140,21 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    // 공이 추가되면 공의 정보를 전부 리스트에 저장
     public void addBallList(Transform tr){
         tr.SetParent(ballsStruct.BallStorage);
         ballList.Add(tr);
+    }
+
+    // 공이 파괴되면 공으 정보를 리스트에서 삭제
+    public void deleteBallList(Transform tr){
+        ballList.Remove(tr);
+        Debug.Log(ballList.Count);
+    }
+
+    /// <summary> 공의 색 정보를 반환 </summary>
+    public bool getColorFlag(){
+        return colorFlag;
     }
 
     /// <summary> 공이 스폰할 랜덤 범위를 반환해준다 </summary>
@@ -160,6 +184,7 @@ public class GameManager : MonoBehaviour
     private IEnumerator TouchUpReset(){
         yield return new WaitForSeconds(2f);
         touchUp = false;
+        ballDrops = true;
     }
 
 }
