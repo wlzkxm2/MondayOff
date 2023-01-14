@@ -20,7 +20,7 @@ public class MovingBox : MonoBehaviour
 
         // 이동하는 박스의 포지션값
         Vector3 boxPos = new Vector3(thisBoxPos.x - (currpos.x - pos.x), thisBoxPos.y, thisBoxPos.z);
-        this.transform.position = boxPos;
+        this.transform.position = new Vector3(Mathf.Clamp(boxPos.x, -2.3f, 2.3f), boxPos.y, boxPos.z);
         boxMoveCall_bool = true;
         currpos = pos;
     }

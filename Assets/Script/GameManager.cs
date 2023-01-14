@@ -32,7 +32,9 @@ public class GameManager : MonoBehaviour
     // 떨어트릴 공 아이템의 오브젝트
     [Header("Balls Object")]
     public BallsStruct ballsStruct;
-    private List<GameObject> ballList = new List<GameObject>();
+    public int startDropBallCounts = 4;
+
+    private List<Transform> ballList = new List<Transform>();
 
     private bool touchUp = false;
 
@@ -47,6 +49,9 @@ public class GameManager : MonoBehaviour
     private void Start() {
         // 카메라의 위치값 저장
         cameraPos = camera.transform.position;
+
+        // 처음 드랍되는 공 카운트를 0보다 작은 수로 했을때
+        if(startDropBallCounts <= 0) startDropBallCounts = 1;
     }
 
     // 마우스 위치는 0, 0, 0기준으로 잡힌다
@@ -61,7 +66,7 @@ public class GameManager : MonoBehaviour
                 // 맨 왼쪽부터 0~1크기
                 // -0.5 를하게 되면 맨 왼쪽은 -0.5 중앙은 0 오른쪽은 0.5가 됨
                 Vector3 touch = Camera.main.ScreenToViewportPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, -Camera.main.transform.position.z));
-                touch = new Vector3(touch.x - 0.5f, touch.y, touch.z);
+                touch = new Vector3(touch.x - 1f, touch.y, touch.z);
 
                 movingBox.setPos(touch);
             }
@@ -79,10 +84,10 @@ public class GameManager : MonoBehaviour
     private void FixedUpdate() {
         // 카메라의 움직임 제어
         if(targetTr != null){
-            // camera.transform.position = new Vector3(cameraPos.x, cameraPos.y + targetTr.position.y, cameraPos.z);
             Vector3 movPos = new Vector3(cameraPos.x, targetTr.position.y, cameraPos.z);
 
             camera.transform.position = Vector3.Lerp(camera.transform.position, movPos, .2f);
+            refreshTargetPos();
         }
     }
 
@@ -94,22 +99,61 @@ public class GameManager : MonoBehaviour
 
     /// <summary> 공 아이템 떨어지는 동작 <summary>
     public void DropBalls(){
-        for(int i = 0; i < 4; i++){
-            // GameObject cloneBall = Instantiate(ballsStruct.Ball, ballsStruct.BallSpawnTr.position, Quaternion.identity);
-            // cloneBall.transform.SetParent(ballsStruct.BallStorage);
-            // ballList.Add(cloneBall);
+        // 처음 공이 4개 떨어지는 동작
+        for(int i = 0; i < startDropBallCounts; i++){
+            GameObject cloneBall = Instantiate(ballsStruct.Ball, BallSpawnRandomPosition(), Quaternion.identity);
+            Transform clonBallTr = cloneBall.transform;
+            clonBallTr.SetParent(ballsStruct.BallStorage);
+            
+            ballList.Add(clonBallTr);
             // Debug.Log(i);
         }
-
-        // GameManager.instance.camera_posSet(ballList[0].transform);
+        camera_posSet(ballList[0]);
 
         Debug.Log(ballList);
     }
 
-    private void CopyBalls(int count){
-        for(int i = 0; i < count; i++){
-
+    /// <summary> 타겟의 위치를 계속 체크해서 추적할 위치를 초기화 </summary>
+    private void refreshTargetPos(){
+        // 공의 위치 값을 체크해줄 변수
+        Vector3 nowPos = Vector3.zero;      // 현재 체크하는 포지션
+        Vector3 highPos = Vector3.zero;     // 제일 선두에 있는 공의 위치
+        foreach(Transform target in ballList){
+            // 만약 아이템의 위치가 제일 선두에 잇다면
+            nowPos = target.position;
+            if(nowPos.y < highPos.y){
+                highPos = nowPos;
+                camera_posSet(target);
+            }
         }
+    }
+
+    public void addBallList(Transform tr){
+        tr.SetParent(ballsStruct.BallStorage);
+        ballList.Add(tr);
+    }
+
+    /// <summary> 공이 스폰할 랜덤 범위를 반환해준다 </summary>
+    private Vector3 BallSpawnRandomPosition(){
+        Collider spawnCol = ballsStruct.BallSpawnTr.GetComponent<MeshCollider>();
+
+        // 스폰 콜라이더의 사이즈를 불러온다
+        float rangeX = spawnCol.bounds.size.x;
+        float rangeZ = spawnCol.bounds.size.z;
+
+        // Debug.Log($"rangeX {rangeX}, rangeZ {rangeZ}");
+
+        // 사이즈의 랜덤 위치를 출력
+        // 사이즈가 x 1 z 1 인 콜라이더가 있을때
+        // /2 를 해서 0.5 즉 콜라이더의 중간 위치값을 잡고 -1 을 곱해서 시작위치 ~ 끝위치를 출력함
+        rangeX = UnityEngine.Random.Range((rangeX / 2) * -1, rangeX / 2);
+        rangeZ = UnityEngine.Random.Range((rangeZ / 2) * -1, rangeZ / 2);
+
+        Vector3 randomPos = new Vector3(rangeX, 0, rangeZ);
+
+        randomPos = randomPos + ballsStruct.BallSpawnTr.position;
+
+        return randomPos;
     }
 
     // 손을 뗀후 bool 초기화
