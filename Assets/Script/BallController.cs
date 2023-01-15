@@ -47,7 +47,8 @@ public class BallController : MonoBehaviour
 
             multipleSize = multipleArea.getMultiplesize();
 
-            copyBalls();
+            StartCoroutine("copyBallsCour");
+            // copyBalls();
         }
     }
 
@@ -60,13 +61,21 @@ public class BallController : MonoBehaviour
 
     public void changeColor(){
         if(colorFlag){
-            // colorFlag가 True 값일땐 파란색으로 변경 해주기
+            // colorFlag가 false 값일땐 파란색으로 변경 해주기
             colorFlag = false;
             meshRenderer.material = ballMaterial[0];
         }else{
-            // colorFlag가 False값일땐 주황색으로 변경 해주기
+            // colorFlag가 true 주황색으로 변경 해주기
             colorFlag = true;
             meshRenderer.material = ballMaterial[1];
+        }
+    }
+
+    private IEnumerator copyBallsCour(){
+        yield return new WaitForSeconds(.1f);
+        for(int i = 0; i < multipleSize; i++){
+            GameObject copyBalls = Instantiate(this.gameObject, this.transform.position, Quaternion.identity);
+            GameManager.instance.addBallList(copyBalls.transform);
         }
     }
 }

@@ -9,6 +9,7 @@ public class MultipleAreaController : MonoBehaviour
     [SerializeField] private List<Material> colorMaterial = new List<Material>();
     
     [SerializeField] private TextMeshProUGUI multipleText;
+    [SerializeField] private GameObject coneCollection;        // 콘 콜렉션을 추가
 
     private MeshRenderer meshRenderer;
 
@@ -18,6 +19,8 @@ public class MultipleAreaController : MonoBehaviour
 
     private void Start() {
         meshRenderer = GetComponent<MeshRenderer>();
+
+        coneCollection.SetActive(false);
 
         // 시작하면 랜덤으로 얼마나 복제해줄지 사이즈 지정
         multipleSize = Random.Range(2, 5);
@@ -34,6 +37,17 @@ public class MultipleAreaController : MonoBehaviour
             }
         }
 
+    }
+
+    private void Update() {
+        coneSpawn();
+    }
+
+    private void coneSpawn(){
+        bool colorFlag = GameManager.instance.getColorFlag();
+
+        bool active = colorFlag != color ? false : true;
+        coneCollection.SetActive(active);
     }
 
     public int getMultiplesize(){
