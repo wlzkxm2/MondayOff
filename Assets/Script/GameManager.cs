@@ -36,6 +36,9 @@ public class GameManager : MonoBehaviour
 
     private List<Transform> ballList = new List<Transform>();
 
+    [Header("Touch Sensitivity")]
+    [SerializeField] private float sensitivity = 1f;
+
     private bool ballDrops = false;     // 상자에서 공을 떨궛나 체크
     private bool colorFlag = false;
     private bool touchUp = false;
@@ -70,7 +73,10 @@ public class GameManager : MonoBehaviour
                     // 맨 왼쪽부터 0~1크기
                     // -0.5 를하게 되면 맨 왼쪽은 -0.5 중앙은 0 오른쪽은 0.5가 됨
                     Vector3 touch = Camera.main.ScreenToViewportPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, -Camera.main.transform.position.z));
-                    touch = new Vector3(touch.x - 1f, touch.y, touch.z);
+                    // text.SetText($"Debug text Touch Pos : {touch}");
+                    touch = new Vector3(touch.x * sensitivity, touch.y, touch.z);
+    
+                    text.SetText($"Debug text Touch Pos : {touch}");
 
                     movingBox.setPos(touch);
                 }

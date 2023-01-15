@@ -7,7 +7,7 @@ using System;
 public class MovingBox : MonoBehaviour
 {
     // 아이템이 연속적으로 위치가 바뀌지 않게끔 이전 전달받은 값을 확인하는 변수
-    private Vector3 currpos;
+    private Vector3 currpos = Vector3.zero;
 
     private bool boxMoveCall_bool;
     private bool turnbox;
@@ -17,6 +17,11 @@ public class MovingBox : MonoBehaviour
     public void setPos(Vector3 pos){
         // 현재 박스의 포지션 값
         Vector3 thisBoxPos = this.transform.position;
+
+        if(currpos == Vector3.zero){
+            Debug.Log("null");
+            currpos = pos;
+        }
 
         // 이동하는 박스의 포지션값
         Vector3 boxPos = new Vector3(thisBoxPos.x - (currpos.x - pos.x), thisBoxPos.y, thisBoxPos.z);

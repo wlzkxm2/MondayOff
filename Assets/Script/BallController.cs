@@ -28,21 +28,27 @@ public class BallController : MonoBehaviour
     }
     
     private void OnTriggerEnter(Collider collider) {
-        setAreaController(collider);
+        if(collider.gameObject.layer == LayerMask.NameToLayer("Multiple")){
+            setAreaController(collider);
 
-        if(colorFlag != multipleArea.getAreaColor()){
-            Destroy(this.gameObject);
-            GameManager.instance.deleteBallList(this.transform);
+            if(colorFlag != multipleArea.getAreaColor()){
+                Destroy(this.gameObject);
+                GameManager.instance.deleteBallList(this.transform);
+            }
+
         }
     }
 
     // 볼이 나올때 해당 에리어에서 전달받은 multiple 값만큼 복제되서 나옴
     private void OnTriggerExit(Collider collider) {
-        setAreaController(collider);
+        if(collider.gameObject.layer == LayerMask.NameToLayer("Multiple")){
 
-        multipleSize = multipleArea.getMultiplesize();
+            setAreaController(collider);
 
-        copyBalls();
+            multipleSize = multipleArea.getMultiplesize();
+
+            copyBalls();
+        }
     }
 
     private void copyBalls(){

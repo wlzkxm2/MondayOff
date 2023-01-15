@@ -1,11 +1,14 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 public class MultipleAreaController : MonoBehaviour
 {
     // 메테리얼의 리스트 정보를 저장
     [SerializeField] private List<Material> colorMaterial = new List<Material>();
+    
+    [SerializeField] private TextMeshProUGUI multipleText;
 
     private MeshRenderer meshRenderer;
 
@@ -20,6 +23,8 @@ public class MultipleAreaController : MonoBehaviour
         multipleSize = Random.Range(2, 5);
 
         materialName = meshRenderer.material.name;
+
+        multipleText.SetText($"X {multipleSize}");
 
 
         for(int i = 0; i < colorMaterial.Count; i++){
