@@ -7,11 +7,12 @@ public class BallController : MonoBehaviour
     [Header("Input BallMaterials")]
     // 전환할 공의 색 리스트
     [SerializeField] private List<Material> ballMaterial = new List<Material>();
-    private bool colorFlag;     // 공의 색을 설정해줄 플래그 0과 1 로 확인 가능 0은 false 1은 true
-                                // true orange. false blue
 
     private MeshRenderer meshRenderer;
     private MultipleAreaController multipleArea;
+
+    private bool colorFlag;     // 공의 색을 설정해줄 플래그 0과 1 로 확인 가능 0은 false 1은 true
+                                // true orange. false blue
 
     // 전달받을 mumtiple 값
     private int multipleSize;
@@ -48,14 +49,6 @@ public class BallController : MonoBehaviour
             multipleSize = multipleArea.getMultiplesize();
 
             StartCoroutine("copyBallsCour");
-            // copyBalls();
-        }
-    }
-
-    private void copyBalls(){
-        for(int i = 0; i < multipleSize; i++){
-            GameObject copyBalls = Instantiate(this.gameObject, this.transform.position, Quaternion.identity);
-            GameManager.instance.addBallList(copyBalls.transform);
         }
     }
 
@@ -72,10 +65,18 @@ public class BallController : MonoBehaviour
     }
 
     private IEnumerator copyBallsCour(){
-        yield return new WaitForSeconds(.1f);
-        for(int i = 0; i < multipleSize; i++){
-            GameObject copyBalls = Instantiate(this.gameObject, this.transform.position, Quaternion.identity);
-            GameManager.instance.addBallList(copyBalls.transform);
+        yield return new WaitForSeconds(.08f);
+        
+        Vector3 copySpawnPos = new Vector3(this.transform.position.x, this.transform.position.y, this.transform.position.z);
+        
+        if(!multipleArea.InspectionList(this.transform)){
+            for(int i = 0; i < multipleSize; i++){
+                GameObject copyBalls = Instantiate(this.gameObject, copySpawnPos, Quaternion.identity);
+                GameManager.instance.addBallList(copyBalls.transform);
+                multipleArea.InputListBall(copyBalls.transform);
+
+                yield return new WaitForSeconds(.05f);
+            }
         }
     }
 }

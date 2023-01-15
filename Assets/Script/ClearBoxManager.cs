@@ -17,7 +17,7 @@ public class ClearBoxManager : MonoBehaviour
     
     private void LateUpdate() {
         if(goalInBallCount > clearValue){
-            Debug.Log("Clear");
+            // gameObject.transform.position = 
         }
     }
 }

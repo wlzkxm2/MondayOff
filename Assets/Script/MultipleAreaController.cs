@@ -13,6 +13,8 @@ public class MultipleAreaController : MonoBehaviour
 
     private MeshRenderer meshRenderer;
 
+    private List<Transform> inputBall = new List<Transform>();
+
     private string materialName;
     private bool color;     // true orange. false blue
     private int multipleSize;
@@ -41,6 +43,22 @@ public class MultipleAreaController : MonoBehaviour
 
     private void Update() {
         coneSpawn();
+    }
+
+    public void InputListBall(Transform tr){
+        inputBall.Add(tr);
+    }
+
+    // 전달받은 아이템의 정보가 있는지 확인
+    public bool InspectionList(Transform tr){
+        bool check = false;
+        foreach(Transform listItem in inputBall){
+            if(tr.GetHashCode() == listItem.GetHashCode()){
+                check = true;
+                break;
+            }
+        }
+        return check;
     }
 
     private void coneSpawn(){
