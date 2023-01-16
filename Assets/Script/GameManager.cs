@@ -152,6 +152,10 @@ public class GameManager : MonoBehaviour
         ballList.Add(tr);
     }
 
+    public List<Transform> getBallList(){
+        return ballList;
+    }
+
     // 공이 파괴되면 공으 정보를 리스트에서 삭제
     public void deleteBallList(Transform tr){
         ballList.Remove(tr);
