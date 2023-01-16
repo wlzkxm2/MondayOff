@@ -2,9 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
-using System;
+// using System;
 
-[Serializable]
+[System.Serializable]
 public struct BallsStruct{
     public Transform BallSpawnTr;
     public Transform BallStorage;
@@ -40,8 +40,9 @@ public class GameManager : MonoBehaviour
     [SerializeField] private float sensitivity = 1f;
 
     private bool ballDrops = false;     // 상자에서 공을 떨궛나 체크
-    private bool colorFlag = false;
-    private bool touchUp = false;
+    private bool colorFlag = false;     // 색 체크
+    private bool istouchUp = false;       // 터치 체크
+    private bool isclearCheck = false;
 
     private void Awake() {
         if(instance == null){
@@ -67,7 +68,7 @@ public class GameManager : MonoBehaviour
         // 터치 손을 뗀후 공이 떨어지고있는중에 박스 이동 불가
         if(!ballDrops)
         {
-            if(!touchUp){
+            if(!istouchUp){
                 if(Input.GetKey(KeyCode.Mouse0)){
                     // 터치 위치를 지정
                     // 맨 왼쪽부터 0~1크기
@@ -84,7 +85,7 @@ public class GameManager : MonoBehaviour
             // 터치 손을 뗏을때
             if(Input.GetKeyUp(KeyCode.Mouse0)){
                 Debug.Log("mouse Up");
-                touchUp = true;
+                istouchUp = true;
                 movingBox.boolturnboxs();
                 StartCoroutine("TouchUpReset");
             }
@@ -121,9 +122,15 @@ public class GameManager : MonoBehaviour
         // 처음 공이 4개 떨어지는 동작
         for(int i = 0; i < startDropBallCounts; i++){
             GameObject cloneBall = Instantiate(ballsStruct.Ball, BallSpawnRandomPosition(), Quaternion.identity);
-            Transform clonBallTr = cloneBall.transform;
+            Debug.Log($"{BallSpawnRandomPosition()}");
+            // cloneBall.GetComponent<SphereCollider>().enabled = false;
+            cloneBall.GetComponent<Rigidbody>().velocity = Vector3.zero;
+            
+            Transform cloneBallTr = cloneBall.GetComponent<Transform>();
 
-            addBallList(clonBallTr);
+            // Transform cloneBall = ballsStruct.BallStorage.GetChild(i).GetComponent<Transform>();
+
+            addBallList(cloneBallTr);
             // Debug.Log(i);
         }
         camera_posSet(ballList[0]);
@@ -136,24 +143,27 @@ public class GameManager : MonoBehaviour
         // 공의 위치 값을 체크해줄 변수
         Vector3 nowPos = Vector3.zero;      // 현재 체크하는 포지션
         Vector3 highPos = Vector3.zero;     // 제일 선두에 있는 공의 위치
-        foreach(Transform target in ballList){
-            // 만약 아이템의 위치가 제일 선두에 잇다면
-            nowPos = target.position;
-            if(nowPos.y < highPos.y){
-                highPos = nowPos;
-                camera_posSet(target);
+        if(!isclearCheck){
+            foreach(Transform target in ballList){
+                // 만약 아이템의 위치가 제일 선두에 잇다면
+                nowPos = target.position;
+                if(nowPos.y < highPos.y){
+                    highPos = nowPos;
+                    camera_posSet(target);
+                }
             }
         }
+    }
+
+    public void clearCameraViewSet(Transform tr){
+        isclearCheck = true;
+        targetTr.position = new Vector3(tr.position.x, tr.position.y + 10f, tr.position.z);
     }
 
     // 공이 추가되면 공의 정보를 전부 리스트에 저장
     public void addBallList(Transform tr){
         tr.SetParent(ballsStruct.BallStorage);
         ballList.Add(tr);
-    }
-
-    public List<Transform> getBallList(){
-        return ballList;
     }
 
     // 공이 파괴되면 공으 정보를 리스트에서 삭제
@@ -174,16 +184,19 @@ public class GameManager : MonoBehaviour
         // 스폰 콜라이더의 사이즈를 불러온다
         float rangeX = spawnCol.bounds.size.x;
         float rangeZ = spawnCol.bounds.size.z;
+        float rangeY;
 
         // Debug.Log($"rangeX {rangeX}, rangeZ {rangeZ}");
 
         // 사이즈의 랜덤 위치를 출력
         // 사이즈가 x 1 z 1 인 콜라이더가 있을때
         // /2 를 해서 0.5 즉 콜라이더의 중간 위치값을 잡고 -1 을 곱해서 시작위치 ~ 끝위치를 출력함
-        rangeX = UnityEngine.Random.Range((rangeX / 2) * -1, rangeX / 2);
-        rangeZ = UnityEngine.Random.Range((rangeZ / 2) * -1, rangeZ / 2);
+        rangeX = Random.Range((rangeX / 2) * -1, rangeX / 2);
+        rangeY = Random.Range(-1.1f, -0.2f);
+        rangeZ = Random.Range((rangeZ / 2) * -1, rangeZ / 2);
+        // Debug.Log($"rangeX : {rangeX} / rangeZ : {rangeZ}");
 
-        Vector3 randomPos = new Vector3(rangeX, 0, rangeZ);
+        Vector3 randomPos = new Vector3(rangeX, rangeY, rangeZ);
 
         randomPos = randomPos + ballsStruct.BallSpawnTr.position;
 
@@ -193,7 +206,7 @@ public class GameManager : MonoBehaviour
     // 손을 뗀후 bool 초기화
     private IEnumerator TouchUpReset(){
         yield return new WaitForSeconds(2f);
-        touchUp = false;
+        istouchUp = false;
         ballDrops = true;
     }
 

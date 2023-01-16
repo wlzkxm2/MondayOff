@@ -14,7 +14,6 @@ GameObject:
   - component: {fileID: 2482644769079113332}
   - component: {fileID: 1182941998890383801}
   - component: {fileID: -859488978472022527}
-  - component: {fileID: 195123705866773326}
   - component: {fileID: 4784597021978393056}
   m_Layer: 7
   m_Name: Ball
@@ -95,7 +94,7 @@ SphereCollider:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2931651473137122158}
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 13400000, guid: bae2616cd2e8d41478e973e0ff4ede0a, type: 2}
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
@@ -132,20 +131,9 @@ MonoBehaviour:
   ballMaterial:
   - {fileID: 2100000, guid: 5599c955bccfdb44ba9d6215df4757e8, type: 2}
   - {fileID: 2100000, guid: 1ef71e87bb4444340a320b6c1fa3819e, type: 2}
---- !u!136 &195123705866773326
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2931651473137122158}
-  m_Material: {fileID: 13400000, guid: bae2616cd2e8d41478e973e0ff4ede0a, type: 2}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  m_Radius: 0.5
-  m_Height: 1
-  m_Direction: 1
-  m_Center: {x: 0, y: 0, z: 0}
+  ballParticle:
+    bounceParticle: {fileID: 5107898483395852704, guid: 37f40290b301a72468c746a375426ac8, type: 3}
+    destroyParticle: {fileID: 5107898483395852704, guid: 6e106d78d46470a4bb2dd8759bc9c6be, type: 3}
 --- !u!96 &4784597021978393056
 TrailRenderer:
   serializedVersion: 3

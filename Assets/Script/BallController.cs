@@ -2,14 +2,26 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[System.Serializable]
+public struct BallParticleStruct{
+    public GameObject bounceParticle;
+    public GameObject destroyParticle;
+}
+
 public class BallController : MonoBehaviour
 {
     [Header("Input BallMaterials")]
     // 전환할 공의 색 리스트
     [SerializeField] private List<Material> ballMaterial = new List<Material>();
 
+    // 공의 파티클을 저장할 스트럭트
+    [SerializeField] private BallParticleStruct ballParticle;
+
     private MeshRenderer meshRenderer;
+    private Rigidbody rigidbody;
+
     private MultipleAreaController multipleArea;
+    private DestructFloor destructFloor;
 
     private bool colorFlag;     // 공의 색을 설정해줄 플래그 0과 1 로 확인 가능 0은 false 1은 true
                                 // true orange. false blue
@@ -19,20 +31,46 @@ public class BallController : MonoBehaviour
 
     private void Start() {
         meshRenderer = GetComponent<MeshRenderer>();
+        rigidbody = GetComponent<Rigidbody>();
         // 처음 공의 색을 첫번째 리스트 메테리얼로 설정
         colorFlag = GameManager.instance.getColorFlag();
         changeColor();
     }
 
+    private void Update() {
+        if(rigidbody.velocity.y > 2.5f){
+            Debug.Log("velo High!!!!!!!!!!");
+            rigidbody.velocity = new Vector3(rigidbody.velocity.x, 2.5f, rigidbody.velocity.z);
+        }
+    }
+
     private void setAreaController(Collider collider){
         multipleArea = collider.GetComponent<MultipleAreaController>();
     }
+
+    private void setBrokenFllorController(Collider collider){
+        destructFloor = collider.GetComponent<DestructFloor>();
+    }
+
+    // 장애물과 부딪혔을때 파티클 효과 설정
+    private void OnCollisionEnter(Collision collision) {
+        if(collision.collider.gameObject.CompareTag("Obstacle")){
+            // Debug.Log(collision.contacts[0].point);      // 충돌한 위치에 대한 정보를 추출
+            Vector3 contactPos = collision.contacts[0].point;
+            Instantiate(ballParticle.bounceParticle, contactPos, Quaternion.identity);
+        }    
+    }
     
+    // 트리거 콜라이더에 진입했을때
     private void OnTriggerEnter(Collider collider) {
+        // 레이어가 복제 해주는 레이어라면
         if(collider.gameObject.layer == LayerMask.NameToLayer("Multiple")){
+            // 에리어 컴포넌트 호출
             setAreaController(collider);
 
+            // 에리어와 현재 공의 색이 다를경우 현재 공 파괴
             if(colorFlag != multipleArea.getAreaColor()){
+                Instantiate(ballParticle.destroyParticle, this.transform.position, Quaternion.identity);
                 Destroy(this.gameObject);
                 GameManager.instance.deleteBallList(this.transform);
             }
@@ -49,6 +87,13 @@ public class BallController : MonoBehaviour
             multipleSize = multipleArea.getMultiplesize();
 
             StartCoroutine("copyBallsCour");
+        }
+
+        if(collider.gameObject.layer == LayerMask.NameToLayer("BrokenFloor")){
+            setBrokenFllorController(collider);
+
+            destructFloor.addWeight(this.transform);
+
         }
     }
 

@@ -25,7 +25,7 @@ public class MovingBox : MonoBehaviour
 
         // 이동하는 박스의 포지션값
         Vector3 boxPos = new Vector3(thisBoxPos.x - (currpos.x - pos.x), thisBoxPos.y, thisBoxPos.z);
-        this.transform.position = new Vector3(Mathf.Clamp(boxPos.x, -2.3f, 2.3f), boxPos.y, boxPos.z);
+        this.transform.position = new Vector3(Mathf.Clamp(boxPos.x, -2.0f, 2.0f), boxPos.y, boxPos.z);
         boxMoveCall_bool = true;
         currpos = pos;
     }
@@ -55,6 +55,7 @@ public class MovingBox : MonoBehaviour
 
             if(Mathf.Abs(this.transform.rotation.z) == 1){
                 this.transform.rotation = Quaternion.Euler(this.transform.rotation.x, this.transform.rotation.y, 180f);
+                yield return new WaitForSeconds(.5f);
                 GameManager.instance.DropBalls();
                 yield break;
             }
