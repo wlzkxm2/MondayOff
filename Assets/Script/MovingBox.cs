@@ -6,6 +6,9 @@ using System;
 // 박스 움직임에 대한 스크립트
 public class MovingBox : MonoBehaviour
 {
+    private Vector3 startPos;
+    private Quaternion startRotation;
+    
     // 아이템이 연속적으로 위치가 바뀌지 않게끔 이전 전달받은 값을 확인하는 변수
     private Vector3 currpos = Vector3.zero;
 
@@ -13,6 +16,11 @@ public class MovingBox : MonoBehaviour
     private bool turnbox;
 
     private float nowtime = 0;
+
+    private void Start() {
+        startPos = this.transform.position;
+        startRotation = this.transform.rotation;
+    }
 
     public void setPos(Vector3 pos){
         // 현재 박스의 포지션 값
@@ -23,11 +31,18 @@ public class MovingBox : MonoBehaviour
             currpos = pos;
         }
 
+        Debug.Log("set");
+
         // 이동하는 박스의 포지션값
         Vector3 boxPos = new Vector3(thisBoxPos.x - (currpos.x - pos.x), thisBoxPos.y, thisBoxPos.z);
         this.transform.position = new Vector3(Mathf.Clamp(boxPos.x, -2.0f, 2.0f), boxPos.y, boxPos.z);
         boxMoveCall_bool = true;
         currpos = pos;
+    }
+
+    public void resetPos(){
+        this.transform.position = startPos;
+        this.transform.rotation = startRotation;
     }
 
     public void boolturnboxs(){

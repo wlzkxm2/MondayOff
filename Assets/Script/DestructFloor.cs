@@ -52,23 +52,24 @@ public class DestructFloor : MonoBehaviour
 
         }
         if(weight >= limitWeight){
-            weight = 0;
-            for(int i = 0; i < this.transform.GetChild(0).childCount; i++){
-                Rigidbody rigidbody = this.transform.GetChild(0).GetChild(i).GetComponent<Rigidbody>();
-                rigidbody.isKinematic = false;
-                rigidbody.useGravity = true;
-
-                StartCoroutine("destroydBlocks");
-            }
-
-            foreach(Transform tr in pariclePos){
-                Instantiate(particle, tr.position, Quaternion.identity);
-            }
+            StartCoroutine("destroydBlocks");
         }
     }
 
     private IEnumerator destroydBlocks(){
         yield return new WaitForSeconds(.5f);
+
+        for(int i = 0; i < this.transform.GetChild(0).childCount; i++){
+            Rigidbody rigidbody = this.transform.GetChild(0).GetChild(i).GetComponent<Rigidbody>();
+            rigidbody.isKinematic = false;
+            rigidbody.useGravity = true;
+
+            StartCoroutine("destroydBlocks");
+        }
+
+        foreach(Transform tr in pariclePos){
+            Instantiate(particle, tr.position, Quaternion.identity);
+        }
         for(int i = 0; i < this.transform.GetChild(0).childCount; i++){
                 GameObject meshs = this.transform.GetChild(0).GetChild(i).gameObject;
                 Destroy(meshs);

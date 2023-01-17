@@ -38,10 +38,16 @@ public class BallController : MonoBehaviour
     }
 
     private void Update() {
-        if(rigidbody.velocity.y > 2.5f){
-            Debug.Log("velo High!!!!!!!!!!");
-            rigidbody.velocity = new Vector3(rigidbody.velocity.x, 2.5f, rigidbody.velocity.z);
-        }
+        // rigidbody.velocity = new Vector3(2,2,2);
+        // if(rigidbody.velocity.y > 1.5f){
+        //     Debug.Log("velo High!!!!!!!!!!");
+        //     rigidbody.velocity = new Vector3(1.5f, 1.5f, 1.5f);
+        // }
+    }
+
+    private void FixedUpdate() {
+        
+        rigidbody.velocity = new Vector3(rigidbody.velocity.x, Mathf.Clamp(rigidbody.velocity.y, -15f, -3f), 0f);
     }
 
     private void setAreaController(Collider collider){
@@ -58,7 +64,8 @@ public class BallController : MonoBehaviour
             // Debug.Log(collision.contacts[0].point);      // 충돌한 위치에 대한 정보를 추출
             Vector3 contactPos = collision.contacts[0].point;
             Instantiate(ballParticle.bounceParticle, contactPos, Quaternion.identity);
-        }    
+        }   
+        
     }
     
     // 트리거 콜라이더에 진입했을때
@@ -75,6 +82,10 @@ public class BallController : MonoBehaviour
                 GameManager.instance.deleteBallList(this.transform);
             }
 
+        }
+
+        if(collider.gameObject.CompareTag("OutWorld")){
+            Destroy(this.gameObject);
         }
     }
 
