@@ -43,6 +43,7 @@ public class MovingBox : MonoBehaviour
     public void resetPos(){
         this.transform.position = startPos;
         this.transform.rotation = startRotation;
+        nowtime = 0;
     }
 
     public void boolturnboxs(){

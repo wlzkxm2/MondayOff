@@ -62,7 +62,7 @@ public class GameManager : MonoBehaviour
     }
 
     private void Start() {
-        SceneManager.LoadScene("Level04");
+        SceneManager.LoadScene("Level01");
 
         // 카메라의 위치값 저장
         cameraPos = camera.transform.position;
@@ -111,7 +111,7 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    private void LateUpdate() {
+    private void FixedUpdate() {
         // 카메라의 움직임 제어
         if(cameraTargetTr != null){
             Debug.Log($"{cameraTargetTr.position}");
@@ -135,7 +135,8 @@ public class GameManager : MonoBehaviour
         
         Debug.Log($"CallStage");
         SceneManager.UnloadScene("Level0" + sceneLevel);
-        sceneLevel += 1;
+        sceneLevel++;
+        // if()
         Debug.Log($"{sceneLevel}");
         SceneManager.LoadScene("Level0" + sceneLevel);
         
@@ -231,10 +232,13 @@ public class GameManager : MonoBehaviour
         if(!isclearCheck){
             foreach(Transform target in ballList){
                 // 만약 아이템의 위치가 제일 선두에 잇다면
-                nowPos = target.position;
-                if(nowPos.y < highPos.y){
-                    highPos = nowPos;
-                    camera_posSet(target);
+                if(target != null){
+                    nowPos = target.position;
+                    // y가 -로 가기때문에
+                    if(nowPos.y < highPos.y){
+                        highPos = nowPos;
+                        camera_posSet(target);
+                    }
                 }
             }
         }
@@ -247,10 +251,11 @@ public class GameManager : MonoBehaviour
     }
 
     // movingBox 함수를 재설정
-    public void movingBoxChange(MovingBox movingBox, Transform spawnTr){
+    public void movingBoxChange(MovingBox movingBox, Transform spawnTr, List<Transform> listItems){
         // 현재 전달받은 moving box 데이터를 백업
         currMovingBox = this.movingBox;
         currBallSpawnTr = spawnTr;
+        // ballList = listItems;
 
         // 현재 movingbox 를 전달받은 box 로 재설정
         this.movingBox = movingBox;
@@ -273,13 +278,15 @@ public class GameManager : MonoBehaviour
     public void deleteBallList(Transform tr){
         // ballList.Remove(tr);
         // Debug.Log(ballList.Count);
-
+        Debug.Log($"삭제전 {ballList.Count}");
         for(int i = 0; i < ballList.Count; i++){
             if(ballList[i].GetHashCode() == tr.GetHashCode()){
                 ballList.RemoveAt(i);
                 break;
             }
         }
+
+        Debug.Log($"삭제후 {ballList.Count}");
 
         if(ballsStruct.BallStorage.childCount <= 0){
             gameOverStageSet();
@@ -379,14 +386,12 @@ public class GameManager : MonoBehaviour
             count++;
             
             ballList = middleBoxList;
+            
             if(count%7 == 0){
                 yield return new WaitForSeconds(.15f);
             }
         }
 
-        ballList.Clear();
-
-        ballList = middleBoxList;
         
         yield return 0;
     }

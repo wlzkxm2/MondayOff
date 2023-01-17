@@ -37,14 +37,6 @@ public class BallController : MonoBehaviour
         changeColor();
     }
 
-    private void Update() {
-        // rigidbody.velocity = new Vector3(2,2,2);
-        // if(rigidbody.velocity.y > 1.5f){
-        //     Debug.Log("velo High!!!!!!!!!!");
-        //     rigidbody.velocity = new Vector3(1.5f, 1.5f, 1.5f);
-        // }
-    }
-
     private void FixedUpdate() {
         
         rigidbody.velocity = new Vector3(rigidbody.velocity.x, Mathf.Clamp(rigidbody.velocity.y, -15f, -3f), 0f);

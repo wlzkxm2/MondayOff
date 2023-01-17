@@ -35,7 +35,7 @@ public class MiddleBoxManager : MonoBehaviour
     private void Update() {
     }
 
-    private void LateUpdate() {
+    private void FixedUpdate() {
         if(lerpBox){
             if(goalInBallCount > clearValue){
                 time += Time.deltaTime;
@@ -73,6 +73,8 @@ public class MiddleBoxManager : MonoBehaviour
                 goalInBallCount++;
                 if(goalInBallCount > 25){
                     collider.gameObject.layer = LayerMask.NameToLayer("NonColBall");
+                    // GameManager.instance.deleteBallList(collider.transform);
+                    Destroy(collider.gameObject, .5f);
                 }
                 // Debug.Log($"goalInBallCount : {goalInBallCount}");
             }
@@ -107,7 +109,7 @@ public class MiddleBoxManager : MonoBehaviour
                 }
                 currClearCount = goalInBallCount;
             }
-            yield return new WaitForSeconds(1.5f);
+            yield return new WaitForSeconds(1f);
             
         }
         lerpBox = true;
@@ -118,12 +120,14 @@ public class MiddleBoxManager : MonoBehaviour
         lerpBox = false;
 
         foreach(Transform tr in inputBall){
-            Destroy(tr.gameObject);
+            if(tr != null){
+                Destroy(tr.gameObject);
+            }
         }
 
         MovingBox MiddleBox = parentTr.GetComponent<MovingBox>();
         MiddleBox.enabled = true;
-        GameManager.instance.movingBoxChange(MiddleBox, spawnTr);
+        GameManager.instance.movingBoxChange(MiddleBox, spawnTr, inputBall);
 
     }
 
