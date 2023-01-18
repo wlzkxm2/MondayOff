@@ -16,6 +16,7 @@ public class MovingBox : MonoBehaviour
     private bool turnbox;
 
     private float nowtime = 0;
+    private float turnTime = 1f;       
 
     private void Start() {
         startPos = this.transform.position;
@@ -43,6 +44,8 @@ public class MovingBox : MonoBehaviour
     public void resetPos(){
         this.transform.position = startPos;
         this.transform.rotation = startRotation;
+        currpos = Vector3.zero;
+
         nowtime = 0;
     }
 
@@ -62,10 +65,10 @@ public class MovingBox : MonoBehaviour
             yield return new WaitForSeconds(0.1f);
             // 박스를 돌린다
             if(turnbox){       
-                nowtime += Time.deltaTime * 30f;
+                nowtime += Time.deltaTime * 10f;
                 Debug.Log(nowtime);
                 // 1.5초 동안 박스가 돌아간다
-                this.transform.rotation = Quaternion.Slerp(this.transform.rotation, endrotation, nowtime);
+                this.transform.rotation = Quaternion.Slerp(this.transform.rotation, endrotation, nowtime / turnTime);
             }
 
 

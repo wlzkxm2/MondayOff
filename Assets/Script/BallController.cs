@@ -35,6 +35,7 @@ public class BallController : MonoBehaviour
         // 처음 공의 색을 첫번째 리스트 메테리얼로 설정
         colorFlag = GameManager.instance.getColorFlag();
         changeColor();
+        StartCoroutine("BallVelocitySet");
     }
 
     private void FixedUpdate() {
@@ -70,6 +71,7 @@ public class BallController : MonoBehaviour
             // 에리어와 현재 공의 색이 다를경우 현재 공 파괴
             if(colorFlag != multipleArea.getAreaColor()){
                 Instantiate(ballParticle.destroyParticle, this.transform.position, Quaternion.identity);
+                StopCoroutine("BallVelocitySet");
                 Destroy(this.gameObject);
                 GameManager.instance.deleteBallList(this.transform);
             }
@@ -125,6 +127,13 @@ public class BallController : MonoBehaviour
 
                 yield return new WaitForSeconds(.05f);
             }
+        }
+    }
+
+    private IEnumerator BallVelocitySet(){
+        while(true){
+            rigidbody.velocity = new Vector3(rigidbody.velocity.x, Mathf.Clamp(rigidbody.velocity.y, -15f, -3f), 0f);
+            yield return new WaitForFixedUpdate();
         }
     }
 }

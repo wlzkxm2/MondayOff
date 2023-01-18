@@ -93,6 +93,7 @@ public class ClearBoxManager : MonoBehaviour
     private IEnumerator valueCheck(){
         yield return new WaitForSeconds(.1f);
         while(true){
+            // 공이 더이상 들어오는지 체크
             if(goalInBallCount > 0){
                 if(currClearCount == goalInBallCount){
                     break;
@@ -104,6 +105,7 @@ public class ClearBoxManager : MonoBehaviour
             
         }
 
-        GameManager.instance.clearStageSet();
+        if(goalInBallCount >= clearValue)   GameManager.instance.clearStageSet();
+        else GameManager.instance.gameOverStageSet();
     }
 }

@@ -19,9 +19,6 @@ public class GameManager : MonoBehaviour
     // 게임 매니저 인스턴트화
     public static GameManager instance = null;
 
-    // 디버깅용 텍스트
-    public TextMeshProUGUI text;
-
     // 카메라
     [SerializeField] private Camera camera;
     private Vector3 cameraPos;
@@ -87,8 +84,6 @@ public class GameManager : MonoBehaviour
                     Vector3 touch = Camera.main.ScreenToViewportPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, -Camera.main.transform.position.z));
                     // text.SetText($"Debug text Touch Pos : {touch}");
                     touch = new Vector3(touch.x * sensitivity, touch.y, touch.z);
-    
-                    text.SetText($"Debug text Touch Pos : {touch}");
 
                     movingBox.setPos(touch);
                 }
@@ -136,7 +131,7 @@ public class GameManager : MonoBehaviour
         Debug.Log($"CallStage");
         SceneManager.UnloadScene("Level0" + sceneLevel);
         sceneLevel++;
-        // if()
+        if(sceneLevel > 4) sceneLevel = 1;
         Debug.Log($"{sceneLevel}");
         SceneManager.LoadScene("Level0" + sceneLevel);
         
